@@ -24,6 +24,7 @@ from rest_framework_simplejwt.views import (  # type: ignore
 )
 
 urlpatterns = [
+    path("__debug__/", include("debug_toolbar.urls")),
     path('api-auth/', include('rest_framework.urls')),
     path('networks/', include('networks.urls')),
     path(
