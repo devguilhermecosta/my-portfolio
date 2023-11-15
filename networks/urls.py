@@ -6,5 +6,5 @@ app_name = 'networks'
 
 
 urlpatterns = [
-    path('api/v1/', views.NetworksApiV1View.as_view()),
+    path('api/v1/', views.NetworksApiV1View.as_view(), name='networks'),
 ]
