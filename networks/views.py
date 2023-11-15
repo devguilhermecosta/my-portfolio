@@ -10,11 +10,11 @@ class NetworksApiV1View(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        qs = Networks.objects.all()
+        qs = Networks.objects.first()
         return qs
 
     def get(self, *args, **kwargs) -> Response:
-        networks = Networks.objects.first()
+        networks = self.get_queryset()
 
         if networks:
             serializer = NetworksSerializer(
@@ -30,7 +30,7 @@ class NetworksApiV1View(APIView):
             status=status.HTTP_404_NOT_FOUND)
 
     def post(self, *args, **kwargs) -> Response:
-        networks = Networks.objects.first()
+        networks = self.get_queryset()
 
         if not networks:
             serializer = NetworksSerializer(
@@ -53,7 +53,7 @@ class NetworksApiV1View(APIView):
         )
 
     def patch(self, *args, **kwargs) -> Response:
-        networks = Networks.objects.first()
+        networks = self.get_queryset()
 
         if not networks:
             return Response(
