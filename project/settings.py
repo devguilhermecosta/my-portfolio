@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'networks.apps.NetworksConfig',
+    'work.apps.WorkConfig',
 ]
 
 MIDDLEWARE = [
