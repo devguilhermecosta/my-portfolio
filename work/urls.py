@@ -11,7 +11,7 @@ urlpatterns = [
         ),
     path(
         '<str:slug>/',
-        views.WorkDetailAPIV1View.as_view(),
+        views.WorkCreateDetailAPIV1View.as_view(),
         name='work-detail',
         ),
 ]

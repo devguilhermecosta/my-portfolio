@@ -6,7 +6,7 @@ from work.models import Work
 from work.serializers import WorkSerializer
 
 
-class WorkDetailAPIV1View(APIView):
+class WorkCreateDetailAPIV1View(APIView):
     def get(self, *args, **kwargs) -> Response:
         work = get_object_or_404(
             Work,
