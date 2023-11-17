@@ -1,31 +1,33 @@
 from rest_framework import serializers
-from collections import defaultdict
 from . models import Work, WorkImage
 
 
 class WorkImageSerializer(serializers.ModelSerializer):
-    url = serializers.StringRelatedField(source='image')
+    url = serializers.ImageField(
+        source='image',
+        required=True,
+        error_messages={
+            'required': 'Campo obrigatório',
+            'invalid': 'Envie somente imagens',
+        })
+
+    work_id = serializers.PrimaryKeyRelatedField(
+            source='work',
+            queryset=Work.objects.all(),
+            error_messages={
+                'required': 'Campo obrigatório',
+                'blank': 'Campo obrigatório',
+                'null': 'Campo obrigatório',
+            }
+        )
 
     class Meta:
         model = WorkImage
         fields = [
             'id',
+            'work_id',
             'url',
         ]
-
-    def validate(self, attrs) -> None:
-        _errors = defaultdict(list)
-
-        for field, value in attrs.items():
-            if not value or value == '':
-                _errors[field].append(
-                    'Campo obrigatório',
-                )
-
-        if _errors:
-            raise serializers.ValidationError(_errors)
-
-        return super().validate(attrs)
 
 
 class WorkSerializer(serializers.ModelSerializer):
