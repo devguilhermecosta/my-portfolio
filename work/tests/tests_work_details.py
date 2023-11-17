@@ -10,7 +10,7 @@ title_test = 'development of a robot for instagram'
 slug_test = slugify(title_test)
 
 
-class WorkApiV1Tets(APITestCaseWithLogin):
+class WorkDetailsAPIV1Tests(APITestCaseWithLogin):
     reverse_url = 'works:work-detail'
     url = reverse(reverse_url, args=('work-title',))
 
