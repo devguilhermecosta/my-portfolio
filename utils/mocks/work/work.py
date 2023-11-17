@@ -2,12 +2,16 @@ from work.models import Work, WorkImage
 from utils.mocks.images import make_simple_image
 
 
-def make_work(title: str | None = None) -> Work:
+def make_work(title: str | None = None,
+              slug: str | None = None,
+              description: str | None = None,
+              link: str | None = None,
+              ) -> Work:
     obj = Work.objects.create(
-        title='Work Title' or title,
-        slug='work-title',
-        description='this the the description',
-        link='https://my-work.com',
+        title=title or 'Work Title',
+        slug=slug or 'work-title',
+        description=description or 'this the the description',
+        link=link or 'https://my-work.com',
         cover=make_simple_image(),
     )
     obj.save()
