@@ -29,9 +29,35 @@ class WorkImageSerializer(serializers.ModelSerializer):
 
 
 class WorkSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(
+        max_length=255,
+        error_messages={
+            'required': 'Campo obrigatório',
+            'blank': 'Campo obrigatório',
+            'invalid': 'Envie somente textos',
+        }
+    )
+
+    description = serializers.CharField(
+        max_length=1250,
+        error_messages={
+            'required': 'Campo obrigatório',
+            'blank': 'Campo obrigatório',
+            'invalid': 'Envie somente textos',
+        }
+    )
+
+    cover = serializers.ImageField(
+        error_messages={
+            'required': 'Campo obrigatório',
+            'invalid': 'Envie somente imagens',
+        }
+    )
+
     images = WorkImageSerializer(
         many=True,
         source='workimages',
+        required=False,
     )
 
     class Meta:
@@ -46,3 +72,14 @@ class WorkSerializer(serializers.ModelSerializer):
             'created_at',
             'images',
         ]
+
+    def validate_title(self, value: str) -> str:
+        work = Work.objects.filter(title=value.lower())
+
+        if work:
+            raise serializers.ValidationError(
+                'work com este title já existe',
+                code='unique',
+            )
+
+        return value.lower()

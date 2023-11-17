@@ -14,4 +14,9 @@ urlpatterns = [
         views.WorkCreateDetailAPIV1View.as_view(),
         name='work-detail',
         ),
+    path(
+        'create/',
+        views.WorkCreateDetailAPIV1View.as_view(),
+        name='work-create',
+    )
 ]
