@@ -96,7 +96,7 @@ class WorkDetailsAPIV1Tests(APITestCaseWithLogin):
         self.url = reverse(self.reverse_url, args=(slug_test,))
 
         # create an work
-        work = make_work(slug=slug_test)
+        work = make_work(title='this is the title', slug=slug_test)
 
         # create 3 images for the work
         make_image_work(work_instance=work, num_of_imgs=3)

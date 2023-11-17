@@ -24,7 +24,7 @@ class ImageWorksApiV1Tests(APITestCaseWithLogin):
     def test_image_works_url_is_correct(self) -> None:
         self.assertEqual(
             self.url,
-            '/work/1/images/',
+            '/api/work/1/images/',
         )
 
     def test_image_works_uses_correct_view(self) -> None:
@@ -55,9 +55,7 @@ class ImageWorksApiV1Tests(APITestCaseWithLogin):
 
     @parameterized.expand([
         'id',
-        'work',
-        'work_title',
-        'image',
+        'url',
     ])
     def test_images_work_returns_correct_data_when_get_request(self,
                                                                content: str,
@@ -87,8 +85,8 @@ class ImageWorksApiV1Tests(APITestCaseWithLogin):
         )
 
     @parameterized.expand([
-        ('work', 'Campo obrigatório'),
-        ('image', 'Campo obrigatório'),
+        ('work_id', 'Campo obrigatório'),
+        ('url', 'Envie somente imagens'),
     ])
     def test_images_work_post_request_returns_error_messages_if_any_field_is_empty(self, field: str, msg: str) -> None:  # noqa: E501
         # make login
@@ -126,8 +124,8 @@ class ImageWorksApiV1Tests(APITestCaseWithLogin):
         response = self.client.post(
             self.url,
             {
-                'work': 1,
-                'image': image,
+                'work_id': 1,
+                'url': image,
             },
             HTTP_AUTHORIZATION=f'Bearer {token}',
         )
@@ -162,8 +160,7 @@ class ImageWorksApiV1Tests(APITestCaseWithLogin):
         )
 
     @parameterized.expand([
-        ('work', 'Campo obrigatório'),
-        ('image', 'Campo obrigatório'),
+        ('work_id', 'Campo obrigatório'),
     ])
     def test_images_work_patch_request_returns_error_message_if_any_field_is_empty(self, field: str, msg: str) -> None:  # noqa: E501
         # make login
@@ -184,7 +181,7 @@ class ImageWorksApiV1Tests(APITestCaseWithLogin):
 
         self.assertIn(
             msg,
-            str(response.data[field][0]),  # type: ignore
+            str(response.data[field]),  # type: ignore
         )
 
         self.assertEqual(
@@ -205,7 +202,7 @@ class ImageWorksApiV1Tests(APITestCaseWithLogin):
         response = self.client.patch(
             self.url,
             data={
-                'image': another_image,
+                'url': another_image,
             },
             HTTP_AUTHORIZATION=f'Bearer {token}',
         )
@@ -261,7 +258,7 @@ class ImageWorksApiV1Tests(APITestCaseWithLogin):
         """
 
         # create 3 images
-        make_image_work(3)
+        make_image_work(num_of_imgs=3)
 
         images = views.WorkImagesAPIView().get_queryset()
 
