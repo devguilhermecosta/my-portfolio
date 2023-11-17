@@ -25,7 +25,7 @@ class WorkApiV1Tets(APITestCaseWithLogin):
 
         self.assertIs(
             response.func.view_class,  # type: ignore
-            views.WorkDetailAPIV1View,
+            views.WorkCreateDetailAPIV1View,
         )
 
     def test_work_get_request_returns_status_code_404_if_not_work(self) -> None:  # noqa: E501
