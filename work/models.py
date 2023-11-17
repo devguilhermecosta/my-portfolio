@@ -4,10 +4,10 @@ from django.utils.text import slugify
 
 
 class Work(models.Model):
-    title: Field = models.CharField(max_length=255)
-    slug: models.Field = models.SlugField(unique=True)
+    title: Field = models.CharField(max_length=255, unique=True)
+    slug: models.Field = models.SlugField(unique=True, blank=True, null=True)
     description: Field = models.TextField(max_length=1250)
-    link: Field = models.URLField(max_length=255)
+    link: Field = models.URLField(max_length=255, blank=True, null=True)
     cover: Field = models.ImageField(upload_to='works/covers/')
     created_at: models.Field = models.DateField(auto_now_add=True)
 
