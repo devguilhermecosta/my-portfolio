@@ -21,9 +21,16 @@ class Work(models.Model):
 
 
 class WorkImage(models.Model):
-    work: models.Field = models.ForeignKey(Work, on_delete=models.CASCADE)
+    work: models.Field = models.ForeignKey(Work,
+                                           on_delete=models.CASCADE,
+                                           blank=True,
+                                           null=True,
+                                           related_name='workimages',
+                                           )
     image: models.Field = models.ImageField(
         upload_to='works/images/',  # type: ignore
+        blank=True,
+        null=True,
         )
 
     def __str__(self) -> str:
