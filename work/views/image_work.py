@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 from work.models import WorkImage
 from work.serializers import WorkImageSerializer
 
@@ -75,8 +75,9 @@ class WorkImagesListAPIView(APIView):
     http_method_names = ['get']
 
     def get(self, *args, **kwargs) -> Response:
-        images = WorkImage.objects.filter(
-            work_id=kwargs.get('id')
+        images = get_list_or_404(
+            WorkImage,
+            work_id=kwargs.get('id'),
         )
 
         serializer = WorkImageSerializer(
