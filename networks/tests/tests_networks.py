@@ -24,7 +24,7 @@ class NetowrksAPITests(APITestCaseWithLogin):
     def test_networks_url_is_correct(self) -> None:
         self.assertEqual(
             self.url,
-            '/api/networks/api/v1/',
+            '/networks/api/v1/',
         )
 
     def test_networks_uses_correct_view(self) -> None:

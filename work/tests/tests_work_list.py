@@ -1,18 +1,18 @@
-from rest_framework.test import APITestCase
 from django.urls import reverse, resolve
 from work import views
+from utils.mocks.auth import APITestCaseWithLogin
 from utils.mocks.work import make_work_in_batch
 from parameterized import parameterized  # type: ignore
 import re
 
 
-class WorkListAPIV1Tests(APITestCase):
+class WorkListAPIV1Tests(APITestCaseWithLogin):
     url = reverse('works:work-list')
 
     def test_work_list_url_is_correct(self) -> None:
         self.assertEqual(
             self.url,
-            '/api/work/list/',
+            '/work/api/list/',
         )
 
     def test_work_list_uses_correct_view(self) -> None:

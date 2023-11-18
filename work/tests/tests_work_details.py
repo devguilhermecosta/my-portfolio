@@ -1,23 +1,22 @@
 from django.urls import reverse, resolve
 from django.utils.text import slugify
-from rest_framework.test import APITestCase
 from work import views
+from utils.mocks.auth import APITestCaseWithLogin
 from utils.mocks.work import make_work, make_image_work
 from parameterized import parameterized  # type: ignore
-
 
 title_test = 'development of a robot for instagram'
 slug_test = slugify(title_test)
 
 
-class WorkDetailsAPIV1Tests(APITestCase):
-    reverse_url = 'works:work-detail'
+class WorkDetailsAPIV1Tests(APITestCaseWithLogin):
+    reverse_url = 'works:work'
     url = reverse(reverse_url, args=('work-title',))
 
     def test_work_url_is_correct(self) -> None:
         self.assertEqual(
             self.url,
-            '/api/work/work-title/',
+            '/work/api/work-title/',
         )
 
     def test_work_uses_correct_view(self) -> None:

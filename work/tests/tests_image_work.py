@@ -1,30 +1,18 @@
 from utils.mocks.auth import APITestCaseWithLogin
 from django.urls import reverse, resolve
-from django.test import override_settings
 from work import views
 from utils.mocks.work import make_image_work, make_work
 from utils.mocks.images import make_simple_image
 from parameterized import parameterized  # type: ignore
-import contextlib
-import shutil
 
 
-TEST_DIR = 'test_data'
-
-
-@override_settings(MEDIA_ROOT=(TEST_DIR + '/media'))
 class ImageWorksApiV1Tests(APITestCaseWithLogin):
-    url = reverse('works:images-work', args=(1,))
-
-    def tearDown(self) -> None:
-        with contextlib.suppress(OSError):
-            shutil.rmtree(TEST_DIR)
-        return super().tearDown()
+    url = reverse('works:image', args=(1,))
 
     def test_image_works_url_is_correct(self) -> None:
         self.assertEqual(
             self.url,
-            '/api/work/1/images/',
+            '/work/api/image/1/',
         )
 
     def test_image_works_uses_correct_view(self) -> None:

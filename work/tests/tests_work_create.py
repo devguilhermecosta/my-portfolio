@@ -12,7 +12,7 @@ class WorkCreateAPIV1Tests(APITestCaseWithLogin):
     def test_work_post_request_url_is_correct(self) -> None:
         self.assertEqual(
             self.url,
-            '/api/work/create/',
+            '/work/api/create/',
         )
 
     def test_work_post_request_uses_correct_view(self) -> None:
