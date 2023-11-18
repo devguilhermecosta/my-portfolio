@@ -21,10 +21,6 @@ class WorkImagesAPIView(APIView):
 
         return qs  # type: ignore
 
-    def get_queryset(self, *args, **kwargs) -> list[WorkImage] | None:
-        qs = WorkImage.objects.all()
-        return qs  # type: ignore
-
     def get(self, *args, **kwargs) -> Response:
         pk = kwargs.get('id')
 

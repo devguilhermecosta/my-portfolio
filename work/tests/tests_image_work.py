@@ -251,18 +251,3 @@ class ImageWorksApiV1Tests(APITestCaseWithLogin):
             response.status_code,
             204,
         )
-
-    def test_images_work_get_queryset_method_returns_all_images(self) -> None:
-        """
-            This test has been created because the 100% of coverage.
-        """
-
-        # create 3 images
-        make_image_work(num_of_imgs=3)
-
-        images = views.WorkImagesAPIView().get_queryset()
-
-        self.assertEqual(
-            len(images),  # type: ignore
-            3
-        )
