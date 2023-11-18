@@ -40,4 +40,22 @@ class WorkCreateDetailAPIV1View(APIView):
         )
 
 
-# criar a view para a list de trabalhos
+class WorkListAPIV1View(APIView):
+    http_method_names = ['get']
+
+    def get_queryset(self) -> list[Work]:
+        qs = Work.objects.all()
+        return qs  # type: ignore
+
+    def get(self, *args, **kwargs) -> Response:
+        works = self.get_queryset()
+
+        serializer = WorkSerializer(
+            instance=works,
+            many=True,
+        )
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+        )

@@ -1,6 +1,6 @@
-from utils.mocks.auth import APITestCaseWithLogin
 from django.urls import reverse, resolve
 from django.utils.text import slugify
+from rest_framework.test import APITestCase
 from work import views
 from utils.mocks.work import make_work, make_image_work
 from parameterized import parameterized  # type: ignore
@@ -10,7 +10,7 @@ title_test = 'development of a robot for instagram'
 slug_test = slugify(title_test)
 
 
-class WorkDetailsAPIV1Tests(APITestCaseWithLogin):
+class WorkDetailsAPIV1Tests(APITestCase):
     reverse_url = 'works:work-detail'
     url = reverse(reverse_url, args=('work-title',))
 
