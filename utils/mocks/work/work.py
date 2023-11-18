@@ -10,12 +10,31 @@ def make_work(title: str | None = None,
     obj = Work.objects.create(
         title=title or 'Work Title',
         slug=slug or 'work-title',
-        description=description or 'this the the description',
+        description=description or 'this is the the description',
         link=link or 'https://my-work.com',
         cover=make_simple_image(),
     )
     obj.save()
     return obj
+
+
+def make_work_in_batch(num_of_works: int = 1,
+                       with_images: bool = False,
+                       num_of_images_per_obj: int = 1,
+                       ) -> list[Work]:
+    works = []
+
+    for i in range(num_of_works):
+        new_work = make_work(
+            title=f'work title - num {i}',
+            slug=f'work-title-{i}'
+            )
+        if with_images:
+            for i in range(num_of_images_per_obj):
+                make_image_work(work_instance=new_work)
+        works.append(new_work)
+
+    return works
 
 
 def make_image_work(work_instance: Work | None = None,
