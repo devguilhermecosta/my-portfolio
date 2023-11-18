@@ -76,7 +76,7 @@ class WorkListAPIV1View(APIView):
     http_method_names = ['get']
 
     def get(self, *args, **kwargs) -> Response:
-        works = Work.objects.all()
+        works = Work.objects.all().order_by('-id')
 
         serializer = WorkSerializer(
             instance=works,
