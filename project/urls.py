@@ -26,8 +26,8 @@ from rest_framework_simplejwt.views import (  # type: ignore
 urlpatterns = [
     path("__debug__/", include("debug_toolbar.urls")),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/networks/', include('networks.urls')),
-    path('api/work/', include('work.urls')),
+    path('networks/', include('networks.urls')),
+    path('work/', include('work.urls')),
     path(
         'api/token/',
         TokenObtainPairView.as_view(),

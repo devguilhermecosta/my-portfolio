@@ -9,7 +9,7 @@ from work.serializers import WorkSerializer
 
 class WorkCreateDetailAPIV1View(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
-    http_method_names = ['get', 'post']
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get(self, *args, **kwargs) -> Response:
         work = get_object_or_404(
@@ -39,16 +39,44 @@ class WorkCreateDetailAPIV1View(APIView):
             status=status.HTTP_201_CREATED,
         )
 
+    def patch(self, *args, **kwargs) -> Response:
+        work = get_object_or_404(
+            Work,
+            slug=kwargs.get('slug'),
+        )
+
+        serializer = WorkSerializer(
+            instance=work,
+            many=False,
+            data=self.request.data,
+            partial=True,
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
+    def delete(self, *args, **kwargs) -> Response:
+        work = get_object_or_404(
+            Work,
+            slug=kwargs.get('slug'),
+        )
+
+        work.delete()
+
+        return Response(
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
 
 class WorkListAPIV1View(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     http_method_names = ['get']
 
-    def get_queryset(self) -> list[Work]:
-        qs = Work.objects.all()
-        return qs  # type: ignore
-
     def get(self, *args, **kwargs) -> Response:
-        works = self.get_queryset()
+        works = Work.objects.all()
 
         serializer = WorkSerializer(
             instance=works,

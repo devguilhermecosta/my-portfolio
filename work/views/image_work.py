@@ -3,32 +3,22 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404
-from django.http import Http404
 from work.models import WorkImage
 from work.serializers import WorkImageSerializer
 
 
 class WorkImagesAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def get_images_or_404(self, id: int | None) -> list[WorkImage]:
-        qs = WorkImage.objects.filter(
-            work_id=id,
-        )
-
-        if not qs:
-            raise Http404()
-
-        return qs  # type: ignore
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get(self, *args, **kwargs) -> Response:
-        pk = kwargs.get('id')
-
-        images = self.get_images_or_404(id=pk)
+        image = get_object_or_404(
+            WorkImage,
+            pk=kwargs.get('id'),
+        )
 
         serializer = WorkImageSerializer(
-            instance=images,
-            many=True,
+            instance=image,
         )
 
         return Response(
@@ -77,4 +67,24 @@ class WorkImagesAPIView(APIView):
 
         return Response(
             status=status.HTTP_204_NO_CONTENT,
+        )
+
+
+class WorkImagesListAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    http_method_names = ['get']
+
+    def get(self, *args, **kwargs) -> Response:
+        images = WorkImage.objects.filter(
+            work_id=kwargs.get('id')
+        )
+
+        serializer = WorkImageSerializer(
+            instance=images,
+            many=True,
+        )
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
         )
