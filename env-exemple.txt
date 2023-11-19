@@ -3,6 +3,8 @@ SECRET_KEY = 'blablabla'
 
 ALLOWED_HOSTS = ''
 
+CSRF_TRUSTED_ORIGINS = ''
+
 
 ### REST_FRAMEWORK
 # time in minutes
