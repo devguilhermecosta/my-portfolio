@@ -1,4 +1,7 @@
 ### DJANGO
+# 1 True, 0 False
+DEBUG = '1'
+
 SECRET_KEY = 'blablabla'
 
 ALLOWED_HOSTS = ''

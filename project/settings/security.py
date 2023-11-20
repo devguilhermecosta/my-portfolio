@@ -9,7 +9,7 @@ load_dotenv()
 SECRET_KEY = os.environ.get('SECRET_KEY', 'INSECURE')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.environ.get('DEBUG') == '1' else False
 
 ALLOWED_HOSTS = string_to_list('ALLOWED_HOSTS')
 
