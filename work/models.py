@@ -1,6 +1,8 @@
 from django.db import models
 from django.db.models import Field
 from django.utils.text import slugify
+from utils.images import resize_image
+import contextlib
 
 
 class Work(models.Model):
@@ -17,6 +19,11 @@ class Work(models.Model):
     def save(self, *args, **kwargs) -> None:
         if not self.slug:
             self.slug = slugify(self.title)
+
+        if self.cover:
+            with contextlib.suppress(FileNotFoundError):
+                resize_image(self.cover)
+
         return super().save(*args, **kwargs)
 
 
@@ -30,5 +37,9 @@ class WorkImage(models.Model):
     def __str__(self) -> str:
         return f'image_id {self.pk}'
 
+    def save(self, *args, **kwargs) -> None:
+        if self.image:
+            with contextlib.suppress(FileNotFoundError):
+                resize_image(self.image)
 
-# criar função para redimensionar as imagens
+        return super().save(*args, **kwargs)
