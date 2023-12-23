@@ -17,6 +17,9 @@ class Work(models.Model):
         return self.title
 
     def save(self, *args, **kwargs) -> None:
+
+        save = super().save(*args, **kwargs)
+
         if not self.slug:
             self.slug = slugify(self.title)
 
@@ -24,7 +27,7 @@ class Work(models.Model):
             with contextlib.suppress(FileNotFoundError):
                 resize_image(self.cover)
 
-        return super().save(*args, **kwargs)
+        return save
 
 
 class WorkImage(models.Model):
@@ -32,14 +35,17 @@ class WorkImage(models.Model):
                                            on_delete=models.CASCADE,
                                            related_name='workimages',
                                            )
-    image: models.Field = models.ImageField(upload_to='works/images/')
+    image: models.ImageField = models.ImageField(upload_to='works/images/')
 
     def __str__(self) -> str:
         return f'image_id {self.pk}'
 
     def save(self, *args, **kwargs) -> None:
+
+        save = super().save(*args, **kwargs)
+
         if self.image:
             with contextlib.suppress(FileNotFoundError):
                 resize_image(self.image)
 
-        return super().save(*args, **kwargs)
+        return save
