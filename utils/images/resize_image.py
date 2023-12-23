@@ -19,7 +19,7 @@ def resize_image(image, image_width: int = 800):
 
     ratio_w_h = (height * 100) / width
 
-    if image_width < width:
+    if width < image_width:
         return None
 
     image_height = round((image_width * ratio_w_h) / 100)
