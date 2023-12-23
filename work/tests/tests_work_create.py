@@ -4,6 +4,7 @@ from work import views
 from parameterized import parameterized  # type: ignore
 from utils.mocks.images import make_simple_image
 from utils.mocks.work import make_work
+from work.models import Work
 
 
 class WorkCreateAPIV1Tests(APITestCaseWithLogin):
@@ -117,4 +118,27 @@ class WorkCreateAPIV1Tests(APITestCaseWithLogin):
         self.assertEqual(
             response.status_code,
             201,
+        )
+
+    def test_work_post_request_must_resize_the_cover(self) -> None:  # noqa: E501
+        # make login
+        _, token = self.make_login()
+
+        # tries create a new obj with as little information as possible​
+        self.client.post(
+            self.url,
+            {
+                'title': 'work title',
+                'description': 'work description',
+                'cover': make_simple_image(),
+            },
+            HTTP_AUTHORIZATION=f'Bearer {token}',
+            )
+
+        work = Work.objects.first()
+
+        # the original width is 1200
+        self.assertEqual(
+            work.cover.width,  # type: ignore
+            800
         )

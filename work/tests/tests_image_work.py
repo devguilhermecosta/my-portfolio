@@ -1,6 +1,7 @@
 from utils.mocks.auth import APITestCaseWithLogin
 from django.urls import reverse, resolve
 from work import views
+from work.models import WorkImage
 from utils.mocks.work import make_image_work, make_work
 from utils.mocks.images import make_simple_image
 from parameterized import parameterized  # type: ignore
@@ -121,6 +122,33 @@ class ImageWorksApiV1Tests(APITestCaseWithLogin):
         self.assertEqual(
             response.status_code,
             201,
+        )
+
+    def test_images_work_post_request_must_resize_the_image(self) -> None:  # noqa: E501
+        # make login
+        _, token = self.make_login()
+
+        # make a work object with id = 1
+        make_work()
+
+        # make a simple image
+        image = make_simple_image()
+
+        self.client.post(
+            self.url,
+            {
+                'work_id': 1,
+                'url': image,
+            },
+            HTTP_AUTHORIZATION=f'Bearer {token}',
+        )
+
+        image_work = WorkImage.objects.first()
+
+        # the original width is 1200
+        self.assertEqual(
+            image_work.image.width,  # type: ignore
+            800,
         )
 
     def test_images_work_patch_request_returns_status_code_401_if_not_a_valid_jwt_token(self) -> None:  # noqa: E501
