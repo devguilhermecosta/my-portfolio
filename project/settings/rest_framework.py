@@ -1,5 +1,6 @@
 from datetime import timedelta
 from dotenv import load_dotenv
+from utils.string import string_to_list
 import os
 
 
@@ -30,3 +31,5 @@ SIMPLE_JWT = {
         ) == '1' else False,
     "SIGNING_KEY": os.environ.get('SIGNING_KEY'),
 }
+
+CORS_ALLOWED_ORIGINS = string_to_list('CORS_ALLOWED_ORIGINS')
