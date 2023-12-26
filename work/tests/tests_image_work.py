@@ -5,6 +5,7 @@ from work.models import WorkImage
 from utils.mocks.work import make_image_work, make_work
 from utils.mocks.images import make_simple_image
 from parameterized import parameterized  # type: ignore
+from unittest.mock import patch
 
 
 class ImageWorksApiV1Tests(APITestCaseWithLogin):
@@ -27,20 +28,22 @@ class ImageWorksApiV1Tests(APITestCaseWithLogin):
 
         make_image_work()
 
-        response = self.client.get(self.url)
+        with patch('utils.auth.decorators.token_verify.TOKEN_ACCESS', new='abc'):  # noqa: E501
+            response = self.client.get(self.url, {'token': 'abc'})
 
-        self.assertEqual(
-            response.status_code,
-            200,
-        )
+            self.assertEqual(
+                response.status_code,
+                200,
+            )
 
     def test_image_works_get_request_returns_status_code_404_if_images_not_found(self) -> None:  # noqa: E501
-        response = self.client.get(self.url)
+        with patch('utils.auth.decorators.token_verify.TOKEN_ACCESS', new='abc'):  # noqa: E501
+            response = self.client.get(self.url, {'token': 'abc'})
 
-        self.assertEqual(
-            response.status_code,
-            404,
-        )
+            self.assertEqual(
+                response.status_code,
+                404,
+            )
 
     @parameterized.expand([
         'id',
@@ -52,22 +55,24 @@ class ImageWorksApiV1Tests(APITestCaseWithLogin):
         # make 3 images objects
         make_image_work(num_of_imgs=3)
 
-        response = self.client.get(self.url)
+        with patch('utils.auth.decorators.token_verify.TOKEN_ACCESS', new='abc'):  # noqa: E501
+            response = self.client.get(self.url, {'token': 'abc'})
 
-        # checks if the work has 3 images objects
-        self.assertEqual(
-            len(response.data),  # type: ignore
-            3,
-        )
+            # checks if the work has 3 images objects
+            self.assertEqual(
+                len(response.data),  # type: ignore
+                3,
+            )
 
-        # check images data
-        self.assertIn(
-            content,
-            str(response.data),
-        )
+            # check images data
+            self.assertIn(
+                content,
+                str(response.data),
+            )
 
     def test_images_work_post_request_is_not_allowed_without_a_valid_jwt_token(self) -> None:  # noqa: E501
         response = self.client.post(self.url)
+
         self.assertEqual(
             response.status_code,
             401,

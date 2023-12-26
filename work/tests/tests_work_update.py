@@ -3,6 +3,7 @@ from django.urls import reverse, resolve
 from work import views
 from parameterized import parameterized  # type: ignore
 from utils.mocks.work import make_work
+from unittest.mock import patch
 
 
 class WorkUpdateAPIV1Tests(APITestCaseWithLogin):
@@ -120,11 +121,12 @@ class WorkUpdateAPIV1Tests(APITestCaseWithLogin):
         )
 
         # get the work
-        response = self.client.get(self.url)
+        with patch('utils.auth.decorators.token_verify.TOKEN_ACCESS', new='abc'):  # noqa: E501
+            response = self.client.get(self.url, {'token': 'abc'})
 
-        work_data = response.data['title']  # type: ignore
+            work_data = response.data['title']  # type: ignore
 
-        self.assertEqual(
-            work_data,
-            another_title,
-        )
+            self.assertEqual(
+                work_data,
+                another_title,
+            )

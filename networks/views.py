@@ -4,8 +4,14 @@ from rest_framework import status
 from . models import Networks
 from . serializers import NetworksSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from django.utils.decorators import method_decorator
+from utils.auth.decorators import token_verify
 
 
+@method_decorator(
+    token_verify,
+    name='get'
+)
 class NetworksApiV1View(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
