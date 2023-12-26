@@ -5,8 +5,14 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404, get_list_or_404
 from work.models import WorkImage
 from work.serializers import WorkImageSerializer
+from utils.auth.decorators import token_verify
+from django.utils.decorators import method_decorator
 
 
+@method_decorator(
+    token_verify,
+    name='get'
+)
 class WorkImagesAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     http_method_names = ['get', 'post', 'patch', 'delete']
@@ -70,6 +76,10 @@ class WorkImagesAPIView(APIView):
         )
 
 
+@method_decorator(
+    token_verify,
+    name='get'
+)
 class WorkImagesListAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     http_method_names = ['get']

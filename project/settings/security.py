@@ -5,6 +5,7 @@ import os
 
 load_dotenv()
 
+TOKEN_ACCESS = os.environ.get('TOKEN_ACCESS', '')
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'INSECURE')
 
