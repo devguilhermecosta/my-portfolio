@@ -17,9 +17,6 @@ class Work(models.Model):
         return self.title
 
     def save(self, *args, **kwargs) -> None:
-
-        save = super().save(*args, **kwargs)
-
         if not self.slug:
             self.slug = slugify(self.title)
 
@@ -27,7 +24,7 @@ class Work(models.Model):
             with contextlib.suppress(FileNotFoundError):
                 resize_image(self.cover)
 
-        return save
+        return super().save(*args, **kwargs)
 
 
 class WorkImage(models.Model):
@@ -41,11 +38,8 @@ class WorkImage(models.Model):
         return f'image_id {self.pk}'
 
     def save(self, *args, **kwargs) -> None:
-
-        save = super().save(*args, **kwargs)
-
         if self.image:
             with contextlib.suppress(FileNotFoundError):
                 resize_image(self.image)
 
-        return save
+        return super().save(*args, **kwargs)
