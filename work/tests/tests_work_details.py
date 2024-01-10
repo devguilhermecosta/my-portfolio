@@ -4,7 +4,7 @@ from work import views
 from utils.mocks.auth import APITestCaseWithLogin
 from utils.mocks.work import make_work, make_image_work
 from parameterized import parameterized  # type: ignore
-from unittest.mock import patch
+from rest_framework_api_key.models import APIKey
 
 title_test = 'development of a robot for instagram'
 slug_test = slugify(title_test)
@@ -13,6 +13,10 @@ slug_test = slugify(title_test)
 class WorkDetailsAPIV1Tests(APITestCaseWithLogin):
     reverse_url = 'works:work'
     url = reverse(reverse_url, args=('work-title',))
+
+    def setUp(self, *args, **kwargs) -> None:
+        _, self.key = APIKey.objects.create_key(name='my-app')
+        return super().setUp(*args, **kwargs)
 
     def test_work_url_is_correct(self) -> None:
         self.assertEqual(
@@ -28,26 +32,38 @@ class WorkDetailsAPIV1Tests(APITestCaseWithLogin):
             views.WorkCreateDetailAPIV1View,
         )
 
-    def test_work_get_request_returns_status_code_404_if_not_work(self) -> None:  # noqa: E501
-        with patch('utils.auth.decorators.token_verify.TOKEN_ACCESS', new='abc'):  # noqa: E501
-            response = self.client.get(self.url, {'token': 'abc'})
+    def test_work_get_request_returns_status_code_401(self) -> None:  # noqa: E501
+        response = self.client.get(self.url,)
 
-            self.assertEqual(
-                response.status_code,
-                404,
-            )
+        self.assertEqual(
+            response.status_code,
+            401,
+        )
+
+    def test_work_get_request_returns_status_code_404_if_not_work(self) -> None:  # noqa: E501
+        response = self.client.get(
+            self.url,
+            HTTP_AUTHORIZATION=f'Api-Key {self.key}',
+        )
+
+        self.assertEqual(
+            response.status_code,
+            404,
+        )
 
     def test_work_get_request_returns_status_code_200_if_work(self) -> None:
         # create an work
         make_work()
 
-        with patch('utils.auth.decorators.token_verify.TOKEN_ACCESS', new='abc'):  # noqa: E501
-            response = self.client.get(self.url, {'token': 'abc'})
+        response = self.client.get(
+            self.url,
+            HTTP_AUTHORIZATION=f'Api-Key {self.key}',
+        )
 
-            self.assertEqual(
-                response.status_code,
-                200,
-            )
+        self.assertEqual(
+            response.status_code,
+            200,
+        )
 
     @parameterized.expand([
         'id',
@@ -75,20 +91,22 @@ class WorkDetailsAPIV1Tests(APITestCaseWithLogin):
         # create 3 images for the work
         make_image_work(work_instance=work, num_of_imgs=3)
 
-        with patch('utils.auth.decorators.token_verify.TOKEN_ACCESS', new='abc'):  # noqa: E501
-            response = self.client.get(self.url, {'token': 'abc'})
+        response = self.client.get(
+            self.url,
+            HTTP_AUTHORIZATION=f'Api-Key {self.key}',
+        )
 
-            # checks the response data
-            self.assertIn(
-                text,
-                str(response.data),
-            )
+        # checks the response data
+        self.assertIn(
+            text,
+            str(response.data),
+        )
 
-            # checks if the work has 3 images
-            self.assertEqual(
-                len(response.data.get('images')),  # type: ignore
-                3,
-            )
+        # checks if the work has 3 images
+        self.assertEqual(
+            len(response.data.get('images')),  # type: ignore
+            3,
+        )
 
     def test_work_get_request_must_returns_only_your_images(self) -> None:
         # set the url
@@ -104,11 +122,13 @@ class WorkDetailsAPIV1Tests(APITestCaseWithLogin):
         another_work = make_work(slug='another-work')
         make_image_work(work_instance=another_work, num_of_imgs=2)
 
-        with patch('utils.auth.decorators.token_verify.TOKEN_ACCESS', new='abc'):  # noqa: E501
-            response = self.client.get(self.url, {'token': 'abc'})
+        response = self.client.get(
+            self.url,
+            HTTP_AUTHORIZATION=f'Api-Key {self.key}',
+        )
 
-            # checks if the work has 3 images
-            self.assertEqual(
-                len(response.data.get('images')),  # type: ignore
-                3,
-            )
+        # checks if the work has 3 images
+        self.assertEqual(
+            len(response.data.get('images')),  # type: ignore
+            3,
+        )

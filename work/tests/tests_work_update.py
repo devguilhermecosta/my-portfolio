@@ -3,7 +3,7 @@ from django.urls import reverse, resolve
 from work import views
 from parameterized import parameterized  # type: ignore
 from utils.mocks.work import make_work
-from unittest.mock import patch
+from rest_framework_api_key.models import APIKey
 
 
 class WorkUpdateAPIV1Tests(APITestCaseWithLogin):
@@ -121,12 +121,15 @@ class WorkUpdateAPIV1Tests(APITestCaseWithLogin):
         )
 
         # get the work
-        with patch('utils.auth.decorators.token_verify.TOKEN_ACCESS', new='abc'):  # noqa: E501
-            response = self.client.get(self.url, {'token': 'abc'})
+        _, key = APIKey.objects.create_key(name='my-app')
+        response = self.client.get(
+            self.url,
+            HTTP_AUTHORIZATION=f'Api-Key {key}',
+        )
 
-            work_data = response.data['title']  # type: ignore
+        work_data = response.data['title']  # type: ignore
 
-            self.assertEqual(
-                work_data,
-                another_title,
-            )
+        self.assertEqual(
+            work_data,
+            another_title,
+        )

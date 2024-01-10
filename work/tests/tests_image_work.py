@@ -5,11 +5,15 @@ from work.models import WorkImage
 from utils.mocks.work import make_image_work, make_work
 from utils.mocks.images import make_simple_image
 from parameterized import parameterized  # type: ignore
-from unittest.mock import patch
+from rest_framework_api_key.models import APIKey
 
 
 class ImageWorksApiV1Tests(APITestCaseWithLogin):
     url = reverse('works:image', args=(1,))
+
+    def setUp(self, *args, **kwargs) -> None:
+        _, self.key = APIKey.objects.create_key(name='my-app')
+        return super().setUp(*args, **kwargs) 
 
     def test_image_works_url_is_correct(self) -> None:
         self.assertEqual(
@@ -24,26 +28,34 @@ class ImageWorksApiV1Tests(APITestCaseWithLogin):
             views.WorkImagesAPIView,
         )
 
+    def test_images_works_get_request_must_returns_status_code_401(self) -> None:  # noqa: E501
+        response = self.client.get(self.url)
+
+        self.assertEqual(
+            response.status_code,
+            401,
+        )
+
     def test_image_works_get_request_returns_status_code_200_if_images(self) -> None:  # noqa: E501
-
         make_image_work()
+        self.client.credentials(HTTP_AUTHORIZATION=f'Api-Key {self.key}')
 
-        with patch('utils.auth.decorators.token_verify.TOKEN_ACCESS', new='abc'):  # noqa: E501
-            response = self.client.get(self.url, {'token': 'abc'})
+        response = self.client.get(self.url)
 
-            self.assertEqual(
-                response.status_code,
-                200,
-            )
+        self.assertEqual(
+            response.status_code,
+            200,
+        )
 
     def test_image_works_get_request_returns_status_code_404_if_images_not_found(self) -> None:  # noqa: E501
-        with patch('utils.auth.decorators.token_verify.TOKEN_ACCESS', new='abc'):  # noqa: E501
-            response = self.client.get(self.url, {'token': 'abc'})
+        self.client.credentials(HTTP_AUTHORIZATION=f'Api-Key {self.key}')
 
-            self.assertEqual(
-                response.status_code,
-                404,
-            )
+        response = self.client.get(self.url)
+
+        self.assertEqual(
+            response.status_code,
+            404,
+        )
 
     @parameterized.expand([
         'id',
@@ -54,21 +66,21 @@ class ImageWorksApiV1Tests(APITestCaseWithLogin):
                                                                ) -> None:
         # make 3 images objects
         make_image_work(num_of_imgs=3)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Api-Key {self.key}')
 
-        with patch('utils.auth.decorators.token_verify.TOKEN_ACCESS', new='abc'):  # noqa: E501
-            response = self.client.get(self.url, {'token': 'abc'})
+        response = self.client.get(self.url)
 
-            # checks if the work has 3 images objects
-            self.assertEqual(
-                len(response.data),  # type: ignore
-                3,
-            )
+        # checks if the work has 3 images objects
+        self.assertEqual(
+            len(response.data),  # type: ignore
+            3,
+        )
 
-            # check images data
-            self.assertIn(
-                content,
-                str(response.data),
-            )
+        # check images data
+        self.assertIn(
+            content,
+            str(response.data),
+        )
 
     def test_images_work_post_request_is_not_allowed_without_a_valid_jwt_token(self) -> None:  # noqa: E501
         response = self.client.post(self.url)

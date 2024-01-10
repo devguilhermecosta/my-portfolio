@@ -1,16 +1,18 @@
 from django.urls import reverse, resolve
+from rest_framework.test import APIClient
 from .. import views
 from .. models import Networks
 from parameterized import parameterized  # type: ignore
 from utils.mocks.networks import make_networks
 from utils.mocks.auth import APITestCaseWithLogin
-from unittest.mock import patch
+from rest_framework_api_key.models import APIKey
 
 
 class NetowrksAPITests(APITestCaseWithLogin):
     url = reverse('networks:networks')
 
     def setUp(self) -> None:
+        self.client = APIClient()
         self.api_data = {
             "instagram": "https://www.instagram.com",
             "linkedin": "https://www.linkedin.com",
@@ -46,23 +48,24 @@ class NetowrksAPITests(APITestCaseWithLogin):
             network,
         )
 
-    def test_networks_returns_status_code_404_when_get_request_and_if_no_networks(self) -> None:  # noqa: E501
-        with patch('utils.auth.decorators.token_verify.TOKEN_ACCESS', new='abc'):  # noqa: E501
-            response = self.client.get(self.url)
-            self.assertEqual(
-                response.status_code,
-                404,
-            )
+    def test_networks_returns_status_code_401_if_invalid_api_key(self) -> None:
+        make_networks()
+        response = self.client.get(self.url)
+        self.assertEqual(
+            response.status_code,
+            401,
+        )
 
-    def test_networks_returns_status_code_200_when_get_request_and_exists_an_networks_object(self) -> None:  # noqa:E 501
+    def test_networks_returns_status_code_200_if_a_valid_api_token(self) -> None:  # noqa: E501
         make_networks()
 
-        with patch('utils.auth.decorators.token_verify.TOKEN_ACCESS', new='abc'):  # noqa: E501
-            response = self.client.get(self.url, {'token': 'abc'})
-            self.assertEqual(
-                response.status_code,
-                200,
-            )
+        _, key = APIKey.objects.create_key(name='my-app')
+        self.client.credentials(HTTP_AUTHORIZATION=f'Api-Key {key}')
+        response = self.client.get(self.url)
+
+        self.assertEqual(
+            response.status_code, 200
+        )
 
     def test_networks_post_request_returns_status_code_401_without_a_jwt_token(self) -> None:  # noqa: E501
         response = self.client.post(self.url)
