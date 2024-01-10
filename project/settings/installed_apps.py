@@ -8,6 +8,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'corsheaders',
     'rest_framework',
+    'rest_framework_api_key',
     'rest_framework_simplejwt',
     'networks.apps.NetworksConfig',
     'work.apps.WorkConfig',
