@@ -3,7 +3,7 @@ from rest_framework import status
 from . models import Networks
 from . serializers import NetworksSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from permissions.views import CustomAPIView
+from utils.views import CustomAPIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 

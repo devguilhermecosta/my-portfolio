@@ -6,17 +6,16 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404
 from work.models import Work
 from work.serializers import WorkSerializer
-from utils.auth.decorators import token_verify
-from django.utils.decorators import method_decorator
+from utils.views import CustomAPIView
+from rest_framework_api_key.permissions import HasAPIKey
 
 
-@method_decorator(
-    token_verify,
-    name='get'
-)
-class WorkCreateDetailAPIV1View(APIView):
+class WorkCreateDetailAPIV1View(CustomAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     http_method_names = ['get', 'post', 'patch', 'delete']
+    permissions_per_method = {
+        'GET': HasAPIKey,
+    }
 
     def get(self, *args, **kwargs) -> Response:
         work = get_object_or_404(
@@ -78,12 +77,8 @@ class WorkCreateDetailAPIV1View(APIView):
         )
 
 
-@method_decorator(
-    token_verify,
-    name='get'
-)
 class WorkListAPIV1View(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, HasAPIKey]
     http_method_names = ['get']
 
     def get(self, request: Request, **kwargs) -> Response:
