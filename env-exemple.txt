@@ -26,8 +26,6 @@ SIGNING_KEY = 'blablabla'
 
 CORS_ALLOWED_ORIGINS = ''
 
-TOKEN_ACCESS = 'abc'
-
 ### DATABASES
 # DB.SQLITE
 ENGINE = "django.db.backends.sqlite3"
