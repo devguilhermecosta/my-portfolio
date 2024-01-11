@@ -2,6 +2,7 @@ from utils.mocks.auth import APITestCaseWithLogin
 from django.urls import reverse, resolve
 from work import views
 from utils.mocks.work import make_work
+from rest_framework_api_key.models import APIKey
 
 
 class WorkDeleteAPIV1Tests(APITestCaseWithLogin):
@@ -61,7 +62,11 @@ class WorkDeleteAPIV1Tests(APITestCaseWithLogin):
         )
 
         # checks if the work exists
-        get_work = self.client.get(self.url)
+        _, key = APIKey.objects.create_key(name='my-app')
+        get_work = self.client.get(
+            self.url,
+            HTTP_AUTHORIZATION=F'Api-Key {key}',
+        )
 
         self.assertEqual(
             get_work.status_code,

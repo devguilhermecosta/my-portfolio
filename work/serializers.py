@@ -73,6 +73,8 @@ class WorkSerializer(serializers.ModelSerializer):
             'cover',
             'created_at',
             'images',
+            'is_published',
+            'show_in_home'
         ]
 
     def validate_title(self, value: str) -> str:

@@ -1,21 +1,19 @@
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404, get_list_or_404
 from work.models import WorkImage
 from work.serializers import WorkImageSerializer
-from utils.auth.decorators import token_verify
-from django.utils.decorators import method_decorator
+from utils.views import CustomAPIView
+from rest_framework_api_key.permissions import HasAPIKey
 
 
-@method_decorator(
-    token_verify,
-    name='get'
-)
-class WorkImagesAPIView(APIView):
+class WorkImagesAPIView(CustomAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     http_method_names = ['get', 'post', 'patch', 'delete']
+    permissions_per_method = {
+        'GET': HasAPIKey
+    }
 
     def get(self, *args, **kwargs) -> Response:
         image = get_object_or_404(
@@ -76,13 +74,12 @@ class WorkImagesAPIView(APIView):
         )
 
 
-@method_decorator(
-    token_verify,
-    name='get'
-)
-class WorkImagesListAPIView(APIView):
+class WorkImagesListAPIView(CustomAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     http_method_names = ['get']
+    permissions_per_method = {
+        'GET': HasAPIKey
+    }
 
     def get(self, *args, **kwargs) -> Response:
         images = get_list_or_404(

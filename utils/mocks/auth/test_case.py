@@ -4,6 +4,7 @@ from django.test import override_settings
 from .. users.mocks import make_superuser
 import contextlib
 import shutil
+import typing
 
 
 TEST_DIR = 'test_data'
@@ -11,6 +12,8 @@ TEST_DIR = 'test_data'
 
 @override_settings(MEDIA_ROOT=(TEST_DIR + '/media'))
 class APITestCaseWithLogin(APITestCase):
+
+    @typing.override
     def tearDown(self) -> None:
         with contextlib.suppress(OSError):
             shutil.rmtree(TEST_DIR)
