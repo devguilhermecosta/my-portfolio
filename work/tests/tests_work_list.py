@@ -73,10 +73,14 @@ class WorkListAPIV1Tests(APITestCaseWithLogin):
         'cover',
         'created_at',
         'images',
+        'is_published',
+        'show_in_home',
         '1',                            # id
         'work title - num 0',           # title
         'work-title-0',                 # slug
         'this is the the description',  # description
+        'True',
+        'False',
     ])
     def test_work_list_get_request_returns_correct_content(self, text: str) -> None:  # noqa: E501
         # creates 2 works

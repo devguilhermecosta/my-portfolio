@@ -71,10 +71,14 @@ class WorkDetailsAPIV1Tests(APITestCaseWithLogin):
         'description',
         'link',
         'images',
+        'is_published',
+        'show_in_home',
         title_test,
         slug_test,
         'this is my description',
         'https://my-robot.com',
+        'True',
+        'False'
     ])
     def test_work_get_request_returns_correct_data(self, text: str) -> None:
         # set the url
